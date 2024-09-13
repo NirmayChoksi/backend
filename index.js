@@ -37,7 +37,7 @@ app.post('/send', async (req, res) => {
 
     try {
         const response = await admin.messaging().send(payload); // Corrected method name
-        console.log(`${response.successCount} messages were sent successfully`);
+        console.log(`${response} messages were sent successfully`);
         res.status(200).json({ message: 'Notifications sent successfully.' });
     } catch (error) {
         console.error('Error sending notifications:', error);
