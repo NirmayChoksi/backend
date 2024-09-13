@@ -4,11 +4,12 @@ const cors = require('cors');
 const admin = require('firebase-admin');
 const app = express();
 const port = 3000;
+serviceAccount = require("/etc/secrets/serviceAccountKey.json");
 
 // Initialize Firebase Admin SDK only once
 admin.initializeApp({
-    projectId: "push-notifications-f7c23",
-    serviceAccountId: "101646088545574856608"
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://push-notifications-f7c23-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
 // Use body-parser middleware to parse incoming request bodies
