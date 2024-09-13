@@ -31,7 +31,8 @@ app.post('/send', async (req, res) => {
             title: requestData.title,
             body: requestData.body,
         },
-        tokens: requestData.guestTokens[0],
+        // tokens: requestData.guestTokens[0],
+        topic: 'Test'
     };
 
     try {
