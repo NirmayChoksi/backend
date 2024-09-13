@@ -35,10 +35,10 @@ app.post('/send', async (req, res) => {
     try {
         const response = await admin.messaging().sendMulticast(payload); // Corrected method name
         console.log(`${response.successCount} messages were sent successfully`);
-        res.status(200).send('Notifications sent successfully.');
+        res.status(200).json({ message: 'Notifications sent successfully.' });
     } catch (error) {
         console.error('Error sending notifications:', error);
-        res.status(500).send('Error sending notifications.');
+        res.status(500).json({ message: 'Error sending notifications.' });
     }
 });
 
