@@ -4,7 +4,8 @@ const cors = require('cors');
 const admin = require('firebase-admin');
 const app = express();
 const port = 3000;
-const serviceAccount = require("/etc/secrets/secret.json");
+
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 
 // Initialize Firebase Admin SDK only once
 admin.initializeApp({
