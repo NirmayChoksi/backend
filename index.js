@@ -4,11 +4,23 @@ const cors = require('cors');
 const admin = require('firebase-admin');
 const app = express();
 const port = 3000;
-serviceAccount = require("/etc/secrets/secret.json");
+require('dotenv').config()
 
 // Initialize Firebase Admin SDK only once
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert({
+        "type": process.env.TYPE,
+        "project_id": process.env.PROJECTID,
+        "private_key_id": process.env.PRIVATEKEYID,
+        "private_key": process.env.PRIVATEKEY,
+        "client_email": process.env.CLIENTEMAIL,
+        "client_id": process.env.CLIENTID,
+        "auth_uri": process.env.AUTHURI,
+        "token_uri": process.env.TOKENURI,
+        "auth_provider_x509_cert_url": process.env.AUTHPROVIDERX509CERTURL,
+        "client_x509_cert_url": process.env.CLIENTX509CERTURL,
+        "universe_domain": process.env.UNIVERSEDOMAN
+    }),
     databaseURL: "https://push-notifications-f7c23-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
