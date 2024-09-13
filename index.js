@@ -31,11 +31,11 @@ app.post('/send', async (req, res) => {
             title: requestData.title,
             body: requestData.body,
         },
-        tokens: requestData.guestTokens,
+        tokens: requestData.guestTokens[0],
     };
 
     try {
-        const response = await admin.messaging().sendEach(payload); // Corrected method name
+        const response = await admin.messaging().send(payload); // Corrected method name
         console.log(`${response.successCount} messages were sent successfully`);
         res.status(200).json({ message: 'Notifications sent successfully.' });
     } catch (error) {
