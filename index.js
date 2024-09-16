@@ -33,10 +33,10 @@ app.post('/send', async (req, res) => {
             title: requestData.title,
             body: requestData.body,
         },
-        token: requestData.guestTokens,
+        tokens: requestData.guestTokens,
     };
 
-    getMessaging().send(payload).then(res => {
+    getMessaging().sendEachForMulticast(payload).then(res => {
         console.log(res);
         res.status(200).json({ message: 'Successfully sent message' })
     }).catch(err => {
