@@ -33,7 +33,7 @@ app.post('/send', async (req, res) => {
             title: requestData.title,
             body: requestData.body,
         },
-        token: requestData.guestTokens[0],
+        token: requestData.guestTokens,
     };
 
     getMessaging().send(payload).then(res => {
