@@ -59,7 +59,7 @@ app.post('/send', async (req, res) => {
     const { title, body, guestTokens, eventDate } = req.body;
 
     // Schedule the notification to be sent in 5 minutes
-    agenda.schedule(new Date(Date.now() + 5 * 60 * 1000), 'send event reminder', {
+    agenda.schedule(new Date(Date.now() + 20000), 'send event reminder', {
         tokens: guestTokens,
         message: {
             title: 'Event Reminder',
