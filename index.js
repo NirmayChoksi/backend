@@ -74,7 +74,7 @@ app.post('/send', async (req, res) => {
 });
 
 // Start agenda to process jobs
-await agenda.start();
+agenda.start();
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
