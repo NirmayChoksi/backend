@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const admin = require('firebase-admin');
+const { getMessaging } = require('firebase-admin/messaging');
 const app = express();
 const port = 3000;
 
@@ -10,6 +11,7 @@ const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 // Initialize Firebase Admin SDK only once
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
+    projectId: "push-notifications-f7c23",
     databaseURL: "https://push-notifications-f7c23-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
@@ -31,18 +33,15 @@ app.post('/send', async (req, res) => {
             title: requestData.title,
             body: requestData.body,
         },
-        // tokens: requestData.guestTokens[0],
-        topic: 'Test'
+        token: requestData.guestTokens[0],
     };
 
-    try {
-        const response = await admin.messaging().send(payload); // Corrected method name
-        console.log(`${response} messages were sent successfully`);
-        res.status(200).json({ message: 'Notifications sent successfully.' });
-    } catch (error) {
-        console.error('Error sending notifications:', error);
-        res.status(500).json({ message: 'Error sending notifications.' });
-    }
+    getMessaging().send(payload).then(res => {
+        console.log(res);
+        res.status(200).json({ message: 'Successfully sent message' })
+    }).catch(err => {
+        res.status(400).json({ err })
+    })
 });
 
 app.listen(port, () => {
