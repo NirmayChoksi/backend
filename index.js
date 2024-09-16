@@ -38,7 +38,7 @@ app.post('/send', async (req, res) => {
     };
 
     // Schedule the notification to be sent 5 minutes from now
-    const job = schedule.scheduleJob(new Date(Date.now() + 5 * 60000), () => {
+    const job = schedule.scheduleJob(new Date(Date.now() + 1 * 30000), () => {
         getMessaging().sendEachForMulticast(payload).then(response => {
             console.log(response);
         }).catch(err => {
