@@ -23,7 +23,16 @@ const agenda = new Agenda({ db: { address: 'mongodb+srv://Nirmaychoksi:NirmayCho
 agenda.define('send event reminder', async (job) => {
     const { tokens, message } = job.attrs.data;
     console.log('Agenda Defined');
-    await sendNotification(tokens, message);  // Call the notification function
+    try {
+        // Call the notification function
+        await sendNotification(tokens, message);
+
+        // Remove the job document after sending the notification
+        await job.remove();
+        console.log('Job completed and removed from the database.');
+    } catch (error) {
+        console.error('Error sending notification:', error);
+    }
 });
 
 // Send notification function
