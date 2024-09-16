@@ -6,6 +6,7 @@ const { getMessaging } = require('firebase-admin/messaging');
 const app = express();
 const schedule = require('node-schedule');
 const port = 3000;
+const agenda = require('agenda');
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 
@@ -15,6 +16,29 @@ admin.initializeApp({
     projectId: "push-notifications-f7c23",
     databaseURL: "https://push-notifications-f7c23-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
+
+agenda.define('send event reminder', async (job) => {
+    const { tokens, message } = job.attrs.data;
+    sendNotification(tokens, message);  // Call the notification function
+});
+
+function sendNotification(tokens, message) {
+    const payload = {
+        notification: {
+            title: message.title,
+            body: message.body
+        },
+        token: tokens,
+    };
+
+    getMessaging().sendEach(payload)
+        .then(response => {
+            console.log("Successfully sent message:", response);
+        })
+        .catch(error => {
+            console.log("Error sending message:", error);
+        });
+}
 
 // Use body-parser middleware to parse incoming request bodies
 app.use(bodyParser.json());
@@ -37,17 +61,17 @@ app.post('/send', async (req, res) => {
         tokens: requestData.guestTokens,
     };
 
-    // Schedule the notification to be sent 5 minutes from now
-    const job = schedule.scheduleJob(new Date(Date.now() + 1 * 30000), () => {
-        getMessaging().sendEachForMulticast(payload).then(response => {
-            console.log(response);
-        }).catch(err => {
-            console.error('Error sending notification:', err);
-        });
+    agenda.schedule(new Date(Date.now() + 1 * 20000), 'send event reminder', {
+        token: token,
+        message: {
+            title: 'Event Reminder',
+            body: `Reminder: Your event is tomorrow at ${eventDate.format('MMMM Do YYYY, h:mm A')}`
+        }
     });
 
     res.status(200).json({ message: 'Notification scheduled to be sent in 5 minutes.' });
 });
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
