@@ -22,20 +22,23 @@ const agenda = new Agenda({ db: { address: 'mongodb+srv://Nirmaychoksi:NirmayCho
 // Define the job for sending notifications
 agenda.define('send event reminder', async (job) => {
     const { tokens, message } = job.attrs.data;
+    console.log('Agenda Defined');
     await sendNotification(tokens, message);  // Call the notification function
 });
 
 // Send notification function
 async function sendNotification(tokens, message) {
+    console.log('Send Notification function called', tokens, message);
     const payload = {
         notification: {
             title: message.title,
             body: message.body,
         },
+        tokens
     };
 
     try {
-        const response = await getMessaging().sendMulticast({ tokens, ...payload });
+        const response = await getMessaging().sendEachForMulticast(payload);
         console.log("Successfully sent message:", response);
     } catch (error) {
         console.error("Error sending message:", error);
@@ -59,7 +62,7 @@ app.post('/send', async (req, res) => {
     const { title, body, guestTokens, eventDate } = req.body;
 
     // Schedule the notification to be sent in 5 minutes
-    agenda.schedule(new Date(Date.now() + 20000), 'send event reminder', {
+    await agenda.schedule(new Date(Date.now() + 20000), 'send event reminder', {
         tokens: guestTokens,
         message: {
             title: 'Event Reminder',
@@ -71,7 +74,7 @@ app.post('/send', async (req, res) => {
 });
 
 // Start agenda to process jobs
-agenda.start();
+await agenda.start();
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
