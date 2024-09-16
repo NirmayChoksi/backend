@@ -28,7 +28,7 @@ agenda.define('send event reminder', async (job) => {
         await sendNotification(tokens, message);
 
         // Remove the job document after sending the notification
-        await job.remove();
+        await agenda.cancel({ name: "send event reminder" });
         console.log('Job completed and removed from the database.');
     } catch (error) {
         console.error('Error sending notification:', error);
