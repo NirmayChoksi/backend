@@ -4,6 +4,7 @@ const cors = require('cors');
 const admin = require('firebase-admin');
 const { getMessaging } = require('firebase-admin/messaging');
 const app = express();
+const schedule = require('node-schedule');
 const port = 3000;
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
@@ -36,12 +37,16 @@ app.post('/send', async (req, res) => {
         tokens: requestData.guestTokens,
     };
 
-    getMessaging().sendEachForMulticast(payload).then(res => {
-        console.log(res);
-        res.status(200).json({ message: 'Successfully sent message' })
-    }).catch(err => {
-        res.status(400).json({ err })
-    })
+    // Schedule the notification to be sent 5 minutes from now
+    const job = schedule.scheduleJob(new Date(Date.now() + 5 * 60000), () => {
+        getMessaging().sendEachForMulticast(payload).then(response => {
+            console.log(response);
+        }).catch(err => {
+            console.error('Error sending notification:', err);
+        });
+    });
+
+    res.status(200).json({ message: 'Notification scheduled to be sent in 5 minutes.' });
 });
 
 app.listen(port, () => {
